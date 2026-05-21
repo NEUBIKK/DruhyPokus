@@ -6,12 +6,22 @@
     "maintenance": {
       "title": "Údržba",
       "description": "Omlouváme se, ale náš systém je momentálně v údržbě. Pracujeme na zlepšení našich služeb a brzy budeme zpět online. Děkujeme za vaši trpělivost a pochopení."
+    },
+    "currency": {
+      "prefix": "",
+      "suffix": " Kč"
     }
   },
   "page": {
     "home": {
       "title": "Domovská stránka",
       "description": "Vítejte na naší domovské stránce! Jsme rádi, že jste zde. Prozkoumejte naše služby a produkty, které vám mohou pomoci dosáhnout vašich cílů. Neváhejte nás kontaktovat pro více informací."
+    }
+  },
+  "components": {
+    "inzeratCard": {
+      "contactInfo": "Nabízí: ",
+      "detailButton": "Zobrazit detail"
     }
   }
 }
