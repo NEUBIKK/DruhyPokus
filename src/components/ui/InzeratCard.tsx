@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Card, Badge, Group, Title, Text, Button } from "@mantine/core";
 
-export function ListingCard( props: {
+export function InzeratCard( props: {
   itemName?: string;
   description?: string;
   category?: string;
