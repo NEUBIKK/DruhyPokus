@@ -22,6 +22,11 @@ export function PageLayout({ children }: PropsWithChildren) {
               variant="light"
               color="orange"
               size="lg"
+              style={{
+              background: "linear-gradient(135deg, #ff922b, #ffd43b)",
+              border: "none",
+              color: "white",
+                   }}
               onClick={() => setColorScheme(computedColorScheme === "light" ? "dark" : "light")}
               aria-label="Toggle color scheme"
             >

@@ -5,6 +5,24 @@ import { Card, Badge, Group, Title, Text, Button, AspectRatio } from "@mantine/c
 import Image from "next/image";
 import Link from "next/link";
 
+function getStateBadgeProps(state?: string) {
+  switch (state) {
+    case "Rezervováno":
+      return {
+        gradient: { from: "violet", to: "rgba(212, 138, 255, 1)", deg: 275 },
+      };
+    case "Prodáno / Předáno":
+      return {
+        gradient: { from: "gray", to: "darkgray", deg: 275 },
+      };
+    case "Dostupné":
+    default:
+      return {
+        gradient: { from: "green", to: "lime", deg: 275 },
+      };
+  }
+}
+
 export function InzeratCard(props: {
   id?: number;
   itemName?: string;
@@ -19,6 +37,7 @@ export function InzeratCard(props: {
   const locale = useLocale();
 
   const isFree = props.price === 0 || props.price === null || props.price === undefined;
+  const stateBadgeProps = getStateBadgeProps(props.state);
 
   return (
     <Link href={`/${locale}/inzeraty/${props.id}`} style={{ textDecoration: "none" }}>
@@ -27,21 +46,21 @@ export function InzeratCard(props: {
         {/* Foto */}
         {props.imageUrl && (
           <Card.Section px="md" pt="md" pb="xs">
-    <AspectRatio ratio={4 / 3}>
-    <Image
-      src={props.imageUrl}
-      alt={props.itemName ?? ""}
-      width={400}
-      height={300}
-      style={{
-      width: "100%",
-      height: "100%",
-      objectFit: "cover",
-      borderRadius: "var(--mantine-radius-md)",
-      display: "block",
-    }}
-  />
-  </AspectRatio>
+            <AspectRatio ratio={4 / 3}>
+              <Image
+                src={props.imageUrl}
+                alt={props.itemName ?? ""}
+                width={400}
+                height={300}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "var(--mantine-radius-md)",
+                  display: "block",
+                }}
+              />
+            </AspectRatio>
           </Card.Section>
         )}
 
@@ -51,13 +70,17 @@ export function InzeratCard(props: {
             <Title order={3} style={{ flex: 1 }}>
               {props.itemName}
             </Title>
-            <Badge variant="gradient" c="white"
-            styles={{
-            label: {
-            textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
-                   },
-        }}
-              gradient={{ from: 'green', to: 'rgb(34, 255, 0)', deg: 275 }}style={{ flexShrink: 0 }}>
+            <Badge
+              variant="gradient"
+              gradient={stateBadgeProps.gradient}
+              c="white"
+              styles={{
+                label: {
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
+                },
+              }}
+              style={{ flexShrink: 0 }}
+            >
               {props.state}
             </Badge>
           </Group>
@@ -73,28 +96,31 @@ export function InzeratCard(props: {
         {/* Kategorie + cena */}
         <Card.Section px="md" pb="xs">
           <Group gap="xs">
-            <Badge variant="outline" c="blue" >
-
+            <Badge variant="outline" c="blue">
               {props.category}
             </Badge>
             {isFree ? (
-              <Badge variant="gradient"
-
-                gradient={{ from: 'green', to: 'rgb(0, 255, 0)', deg: 275 }}
+              <Badge
+                variant="gradient"
+                gradient={{ from: "green", to: "lime", deg: 275 }}
                 styles={{
-                label: {
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
-                       },
-          }}>
+                  label: {
+                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
+                  },
+                }}
+              >
                 {t("common.free")}
               </Badge>
             ) : (
-              <Badge color="orange" variant="gradient"
-                gradient={{ from: 'red', to: 'rgb(255, 165, 0)', deg: 275 }} styles={{
-                label: {
-                textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
-              },
-              }}>
+              <Badge
+                variant="gradient"
+                gradient={{ from: "red", to: "orange", deg: 275 }}
+                styles={{
+                  label: {
+                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
+                  },
+                }}
+              >
                 {t("common.currency.prefix")}
                 {props.price}
                 {t("common.currency.suffix")}
@@ -116,7 +142,7 @@ export function InzeratCard(props: {
           <Button
             fullWidth
             variant="gradient"
-            gradient={{ from: 'yellow', to: 'orange', deg: 275 }}
+            gradient={{ from: "yellow", to: "orange", deg: 275 }}
             color="orange"
             component="div"
           >
