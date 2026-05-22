@@ -2,7 +2,6 @@
 
 import { useTranslations, useLocale } from "next-intl";
 import { Card, Badge, Group, Title, Text, Button, AspectRatio } from "@mantine/core";
-import Image from "next/image";
 import Link from "next/link";
 
 function getStateBadgeProps(state?: string) {
@@ -47,11 +46,9 @@ export function InzeratCard(props: {
         {props.imageUrl && (
           <Card.Section px="md" pt="md" pb="xs">
             <AspectRatio ratio={4 / 3}>
-              <Image
+              <img
                 src={props.imageUrl}
                 alt={props.itemName ?? ""}
-                width={400}
-                height={300}
                 style={{
                   width: "100%",
                   height: "100%",

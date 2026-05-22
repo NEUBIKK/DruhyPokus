@@ -5,6 +5,7 @@ import { items } from "@/db/schemas";
 import { SimpleGrid, Title, Text, Stack, Group, Button, } from "@mantine/core";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { eq, like, not, and, or, isNull } from "drizzle-orm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations();
@@ -14,12 +15,56 @@ export async function generateMetadata(): Promise<Metadata> {
     description: t("page.home.description"),
   };
 }
+interface FetchListingsParams {
+  query: string;
+  category: string;
+  state: string;
+  price: string;
+}
 
-export default async function Page(_: PageProps<"/[locale]">) {
+function fetchListings({ query, category, state, price }: FetchListingsParams) {
+  const conditions = [];
+
+  // Full-text search across title and description
+  if (query) {
+    conditions.push(or(like(items.title, `%${query}%`), like(items.description, `%${query}%`)));
+  }
+
+  if (category && category !== "all") {
+    conditions.push(eq(items.category, category));
+  }
+
+  if (state && state !== "all") {
+    conditions.push(eq(items.status, state));
+  }
+  if (price && price !== "all") {
+    if (price === "free") {
+      conditions.push(isNull(items.price));
+    } else if (price === "paid") {
+      conditions.push(not(isNull(items.price)));
+    }
+  }
+
+  const results = db
+    .select()
+    .from(items)
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .limit(30)
+    .all();
+
+  return results;
+}
+
+export default async function Page(props: PageProps<"/[locale]/inzeraty">) {
   const t = await getTranslations();
 
-const listings_to_show = db.select().from(items).limit(30).all();
+  const searchParams = await props.searchParams;
+  const q = (searchParams.q as string) ?? "";
+  const category = (searchParams.category as string) ?? "all";
+  const state = (searchParams.state as string) ?? "all";
+  const price = (searchParams.price as string) ?? "all";
 
+  const listings_to_show = fetchListings({ query: q, category, state, price });
 
   return (
   <Stack gap="md">
