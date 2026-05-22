@@ -16,11 +16,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   return (
     <html lang={locale} {...mantineHtmlProps}>
       <head>
-        <ColorSchemeScript />
+        <ColorSchemeScript defaultColorScheme="light" />
       </head>
       <body>
         <NextIntlClientProvider>
-          <MantineProvider>
+          <MantineProvider defaultColorScheme="light">
             <ModalsProvider>
               <Providers>
                 <PageLayout>{children}</PageLayout>

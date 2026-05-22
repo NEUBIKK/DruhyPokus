@@ -1,5 +1,6 @@
 {
   "common": {
+    "free": "Zdarma",
     "pageLogo": {
       "ariaLabel": "Logo značky Blogic"
     },
@@ -13,6 +14,16 @@
     }
   },
   "page": {
+    "inzeratDetail" :{
+    "backToList": "Zpět na seznam",
+    "editButton": "Upravit inzerát",
+    "noImage": "Náhled obrázku nabídky",
+    "contact": "Kontakt",
+    "paymentTitle": "Platba a předání",
+    "paymentInfo": "Platbu a předání si domluvte přímo mezi sebou — hotově nebo QR platbou.",
+    "reserveButton": "Rezervovat",
+    "markAsSoldButton": "Označit jako prodáno"
+  },
     "home": {
       "title": "Domovská stránka",
       "description": "Vítejte na naší domovské stránce! Jsme rádi, že jste zde. Prozkoumejte naše služby a produkty, které vám mohou pomoci dosáhnout vašich cílů. Neváhejte nás kontaktovat pro více informací."
@@ -20,14 +31,17 @@
     "inzeraty": {
       "title": "Inzeráty",
       "description": "Prohlédněte si naše aktuální inzeráty a najděte to, co hledáte.",
-      "buttonForm" : "+ Přidat nabídku"
+      "buttonForm"  : "+ Přidat nabídku"
     }
   },
   "components": {
     "InzeratSearchBar": {
       "placeholder": "Hledat inzeráty...",
-      "categoryPlaceholder": "Vyberte kategorii",
-      "categoryAll": "Všechny kategorie"
+      "categoryPlaceholder": "Kategorie",
+      "categoryAll": "Stav",
+      "filterAll": "Vše",
+      "filterFree": "Zdarma",
+      "filterPaid": "Placené"
     },
     "inzeratCard": {
       "contactInfo": "Nabízí: ",

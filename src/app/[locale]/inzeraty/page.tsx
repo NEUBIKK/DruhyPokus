@@ -31,15 +31,17 @@ const listings_to_show = db.select().from(items).limit(30).all();
   <Text c="dimmed">
     {t("page.inzeraty.description")}
   </Text>
-<Button  component="a" href="/inzeraty/novy" color="orange">
+<Button  component="a" href="/inzeraty/novy" variant="gradient"
+      gradient={{ from: 'yellow', to: 'orange', deg: 275 }}>
   {t("page.inzeraty.buttonForm")}
 
 </Button>
   </Group>
   <InzeratSearchBar />
-  <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="mg">
+  <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" >
     {listings_to_show.map((listing) => (
       <InzeratCard
+        id={listing.id}
         key={listing.id}
         itemName={listing.title}
         description={listing.description ?? ""}
@@ -47,10 +49,11 @@ const listings_to_show = db.select().from(items).limit(30).all();
         price={listing.price ?? 0}
         contactName={listing.contactName}
         state={listing.status ?? ""}
+        imageUrl={listing.image ?? undefined}
       />
 
     ))}
-  </SimpleGrid>;
-  </Stack>);
+  </SimpleGrid>
+  </Stack>)
 
 }
