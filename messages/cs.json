@@ -14,7 +14,14 @@
     }
   },
   "page": {
+    "upravitInzerat": {
+      "title": "Upravit inzerát",
+      "saveButton": "Uložit změny",
+      "discardButton": "Zahodit změny"
+    },
+
     "inzeratDetail" :{
+    "deleteButton": "Smazat inzerát",
     "backToList": "Zpět na seznam",
     "editButton": "Upravit inzerát",
     "noImage": "Náhled obrázku nabídky",
