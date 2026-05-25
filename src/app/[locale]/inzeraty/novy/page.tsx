@@ -105,7 +105,7 @@ export default function Page() {
   const sectionTitleProps = { fw: 700, size: "17px", mb: "md" } as const;
 
   return (
-    <Center style={{ minHeight: "100vh", background: "#ffffff", padding: "40px 16px" }}>
+    <Center style={{ minHeight: "100vh", background: "var(--mantine-color-body)", padding: "40px 16px" }}>
       <Stack w="100%" maw={860}>
         <Group justify="space-between" align="flex-end">
           <Stack gap={2}>
@@ -115,13 +115,13 @@ export default function Page() {
             </Text>
           </Stack>
           <Link href="/inzeraty">
-            <Button variant="light" color="orange" bg="white" radius="md" leftSection={<ArrowLeft size={16} />}>
+            <Button variant="light" color="orange" bg="var(--mantine-color-default)" radius="md" leftSection={<ArrowLeft size={16} />}>
               Zpět
             </Button>
           </Link>
         </Group>
 
-        <Card shadow="xl" radius="xl" p="xl" withBorder style={{ borderColor: "#fed7aa", background: "white" }}>
+        <Card shadow="xl" radius="xl" p="xl" withBorder style={{ borderColor: "#fed7aa", background: "var(--mantine-color-default)" }}>
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <Stack gap="xl">
 
@@ -223,23 +223,11 @@ export default function Page() {
 
                   <Box>
                     <Text {...sectionTitleProps}>Fotografie</Text>
-                    {/* Mantine Dropzone is commented out */}
-                    {/*
-                    <Dropzone
-                      onDrop={handleImageChange}
-                      onReject={() => console.log("rejected")}
-                      maxSize={5 * 1024 ** 2}
-                      accept={IMAGE_MIME_TYPE}
-                      radius="lg" p="md"
-                      style={{ border: "2px dashed #fdba74", background: "#fffaf5" }}
-                    >
-                    </Dropzone>
-                    */}
                     <Box
                       onClick={() => fileInputRef.current?.click()}
                       style={{
                         border: "2px dashed #fdba74",
-                        background: "#fffaf5",
+                        background: "var(--mantine-color-body)",
                         borderRadius: "12px",
                         padding: "16px",
                         cursor: "pointer",
