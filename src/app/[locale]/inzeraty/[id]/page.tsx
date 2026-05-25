@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { items } from "@/db/schemas";
 import {
@@ -8,7 +8,7 @@ import {
   Stack, Alert, Center, ThemeIcon, Box,
 } from "@mantine/core";
 import Image from "next/image";
-import { IconPhoto, IconInfoCircle, IconArrowLeft, IconPencil, IconCalendarCheck, IconCircleCheck } from "@tabler/icons-react";
+import { IconPhoto, IconInfoCircle, IconArrowLeft, IconPencil, IconCalendarCheck, IconCircleCheck, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 
@@ -70,10 +70,17 @@ export default async function InzeratDetailPage({
     revalidatePath("/", "layout");
   }
 
+  async function handleDelete() {
+    "use server";
+    await db.delete(items).where(eq(items.id, Number(id)));
+    revalidatePath("/", "layout");
+    redirect(`/${locale}/inzeraty`);
+  }
+
   return (
     <Stack gap="md" p="md">
 
-      {/* Horní lišta — Zpět + Upravit */}
+      {/* Horní lišta — Zpět + Smazat + Upravit */}
       <Group justify="space-between">
         <Link
           href={`/${locale}/inzeraty`}
@@ -89,16 +96,29 @@ export default async function InzeratDetailPage({
           <IconArrowLeft size={16} />
           {t("page.inzeratDetail.backToList")}
         </Link>
-        <Link href={`/${locale}/inzeraty/${id}/upravit`}>
-          <Button
-            styles={shadowLabel}
-            variant="gradient"
-            gradient={{ from: "rgb(0, 204, 255)", to: "blue", deg: 275 }}
-            leftSection={<IconPencil size={16} />}
-          >
-            {t("page.inzeratDetail.editButton")}
-          </Button>
-        </Link>
+        <Group gap="sm">
+          <form action={handleDelete}>
+            <Button
+              type="submit"
+               variant="gradient"
+               gradient={{ from: 'rgba(255, 0, 0, 1)', to: 'orange', deg: 275 }}
+               styles={{label: {textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",},}}
+              leftSection={<IconTrash size={16} />}
+            >
+              {t("page.inzeratDetail.deleteButton")}
+            </Button>
+          </form>
+          <Link href={`/${locale}/inzeraty/${id}/upravit`}>
+            <Button
+              styles={shadowLabel}
+              variant="gradient"
+              gradient={{ from: "rgb(0, 204, 255)", to: "blue", deg: 275 }}
+              leftSection={<IconPencil size={16} />}
+            >
+              {t("page.inzeratDetail.editButton")}
+            </Button>
+          </Link>
+        </Group>
       </Group>
 
       {/* Hlavní obsah — 50/50 */}
@@ -263,6 +283,7 @@ export default async function InzeratDetailPage({
                   </form>
                 </Group>
               </Box>
+
             </Stack>
           </Card>
         </Box>
