@@ -263,7 +263,6 @@ export default async function InzeratDetailPage({
                   </form>
                 </Group>
               </Box>
-
             </Stack>
           </Card>
         </Box>
