@@ -26,6 +26,18 @@ function getStateBadgeProps(state?: string | null) {
   }
 }
 
+function getButtonStates(status?: string | null) {
+  switch (status) {
+    case "Prodáno / Předáno":
+      return { canReserve: false, canSell: false };
+    case "Rezervováno":
+      return { canReserve: false, canSell: true };
+    case "Dostupné":
+    default:
+      return { canReserve: true, canSell: true };
+  }
+}
+
 export default async function InzeratDetailPage({
   params,
 }: {
@@ -44,6 +56,7 @@ export default async function InzeratDetailPage({
 
   const isFree = item.price === 0 || item.price === null;
   const stateBadgeProps = getStateBadgeProps(item.status);
+  const { canReserve, canSell } = getButtonStates(item.status);
 
   async function setRezervorano() {
     "use server";
@@ -208,7 +221,15 @@ export default async function InzeratDetailPage({
               {/* Akční tlačítka */}
               <Box style={{ marginTop: "auto" }}>
                 <Group grow>
-                  <form action={setRezervorano} style={{ flex: 1 }}>
+                  <form
+                    action={canReserve ? setRezervorano : undefined}
+                    style={{
+                      flex: 1,
+                      opacity: canReserve ? 1 : 0.4,
+                      pointerEvents: canReserve ? "auto" : "none",
+                      transition: "opacity 0.2s",
+                    }}
+                  >
                     <Button
                       type="submit"
                       fullWidth
@@ -220,7 +241,15 @@ export default async function InzeratDetailPage({
                       {t("page.inzeratDetail.reserveButton")}
                     </Button>
                   </form>
-                  <form action={setProdano} style={{ flex: 1 }}>
+                  <form
+                    action={canSell ? setProdano : undefined}
+                    style={{
+                      flex: 1,
+                      opacity: canSell ? 1 : 0.4,
+                      pointerEvents: canSell ? "auto" : "none",
+                      transition: "opacity 0.2s",
+                    }}
+                  >
                     <Button
                       type="submit"
                       fullWidth
