@@ -1,5 +1,3 @@
-// src/app/[locale]/inzeraty/[id]/page.tsx
-
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
@@ -7,13 +5,38 @@ import { getTranslations } from "next-intl/server";
 import { items } from "@/db/schemas";
 import {
   Card, Group, Title, Text, Badge, Button,
-  Stack, Alert, AspectRatio, Center, ThemeIcon, Box,
+  Stack, Alert, Center, ThemeIcon, Box,
 } from "@mantine/core";
 import Image from "next/image";
 import { IconPhoto, IconInfoCircle, IconArrowLeft, IconPencil, IconCalendarCheck, IconCircleCheck } from "@tabler/icons-react";
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 
 const shadowLabel = { label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } };
+
+function getStateBadgeProps(state?: string | null) {
+  switch (state) {
+    case "Rezervováno":
+      return { gradient: { from: "violet", to: "rgba(212, 138, 255, 1)", deg: 275 } };
+    case "Prodáno / Předáno":
+      return { gradient: { from: "gray", to: "darkgray", deg: 275 } };
+    case "Dostupné":
+    default:
+      return { gradient: { from: "green", to: "lime", deg: 275 } };
+  }
+}
+
+function getButtonStates(status?: string | null) {
+  switch (status) {
+    case "Prodáno / Předáno":
+      return { canReserve: false, canSell: false };
+    case "Rezervováno":
+      return { canReserve: false, canSell: true };
+    case "Dostupné":
+    default:
+      return { canReserve: true, canSell: true };
+  }
+}
 
 export default async function InzeratDetailPage({
   params,
@@ -32,6 +55,20 @@ export default async function InzeratDetailPage({
   if (!item) notFound();
 
   const isFree = item.price === 0 || item.price === null;
+  const stateBadgeProps = getStateBadgeProps(item.status);
+  const { canReserve, canSell } = getButtonStates(item.status);
+
+  async function setRezervorano() {
+    "use server";
+    await db.update(items).set({ status: "Rezervováno" }).where(eq(items.id, Number(id)));
+    revalidatePath("/", "layout");
+  }
+
+  async function setProdano() {
+    "use server";
+    await db.update(items).set({ status: "Prodáno / Předáno" }).where(eq(items.id, Number(id)));
+    revalidatePath("/", "layout");
+  }
 
   return (
     <Stack gap="md" p="md">
@@ -76,7 +113,6 @@ export default async function InzeratDetailPage({
 
         {/* Levý sloupec — obrázek 50% */}
         <Box style={{ flex: "1 1 0", minWidth: 0 }}>
-          {/* ↓ p={0} aby obrázek vyplnil celou plochu cardu bez paddingu */}
           <Card radius="md" withBorder p={0} h="100%">
             {item.image ? (
               <Box style={{ position: "relative", width: "100%", height: "100%", minHeight: 300 }}>
@@ -86,7 +122,6 @@ export default async function InzeratDetailPage({
                   fill
                   style={{
                     objectFit: "cover",
-                    // ↓ border-radius odpovídá Mantine "md" (8px), aby seděl k okraji cardu
                     borderRadius: "var(--mantine-radius-md)",
                   }}
                 />
@@ -117,7 +152,8 @@ export default async function InzeratDetailPage({
                 <Badge
                   styles={shadowLabel}
                   variant="gradient"
-                  gradient={{ from: "rgba(0, 255, 42, 1)", to: "green", deg: 275 }}
+                  gradient={stateBadgeProps.gradient}
+                  c="white"
                   style={{ flexShrink: 0 }}
                 >
                   {item.status}
@@ -182,28 +218,52 @@ export default async function InzeratDetailPage({
                 <Text size="sm">{t("page.inzeratDetail.paymentInfo")}</Text>
               </Alert>
 
-              {/* Akční tlačítka — přilepená ke spodku, každé 50% šířky */}
+              {/* Akční tlačítka */}
               <Box style={{ marginTop: "auto" }}>
                 <Group grow>
-                  {/* ↑ grow = každé tlačítko dostane stejnou šířku (1:1) */}
-                  <Button
-                    variant="gradient"
-                    gradient={{ from: "yellow", to: "orange", deg: 275 }}
-                    styles={shadowLabel}
-                    leftSection={<IconCalendarCheck size={16} />}
+                  <form
+                    action={canReserve ? setRezervorano : undefined}
+                    style={{
+                      flex: 1,
+                      opacity: canReserve ? 1 : 0.4,
+                      pointerEvents: canReserve ? "auto" : "none",
+                      transition: "opacity 0.2s",
+                    }}
                   >
-                    {t("page.inzeratDetail.reserveButton")}
-                  </Button>
-                  <Button
-                    variant="gradient"
-                    gradient={{ from: "gray", to: "darkgray", deg: 275 }}
-                    styles={shadowLabel}
-                    leftSection={<IconCircleCheck size={16} />}
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="gradient"
+                      gradient={{ from: "yellow", to: "orange", deg: 275 }}
+                      styles={shadowLabel}
+                      leftSection={<IconCalendarCheck size={16} />}
+                    >
+                      {t("page.inzeratDetail.reserveButton")}
+                    </Button>
+                  </form>
+                  <form
+                    action={canSell ? setProdano : undefined}
+                    style={{
+                      flex: 1,
+                      opacity: canSell ? 1 : 0.4,
+                      pointerEvents: canSell ? "auto" : "none",
+                      transition: "opacity 0.2s",
+                    }}
                   >
-                    {t("page.inzeratDetail.markAsSoldButton")}
-                  </Button>
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="gradient"
+                      gradient={{ from: "gray", to: "darkgray", deg: 275 }}
+                      styles={shadowLabel}
+                      leftSection={<IconCircleCheck size={16} />}
+                    >
+                      {t("page.inzeratDetail.markAsSoldButton")}
+                    </Button>
+                  </form>
                 </Group>
               </Box>
+
             </Stack>
           </Card>
         </Box>
