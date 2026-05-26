@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import { IconPhoto, IconInfoCircle, IconArrowLeft, IconPencil, IconCalendarCheck, IconCircleCheck } from "@tabler/icons-react";
 import { HoverButton } from "@/components/ui/HoverButton";
+import { ImageWithHover } from "@/components/ui/ImageWithHover";
 import { revalidatePath } from "next/cache";
 import { DeleteButton } from "./DeleteButton.client";
 
