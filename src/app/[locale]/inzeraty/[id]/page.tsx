@@ -8,9 +8,10 @@ import {
   Stack, Alert, Center, ThemeIcon, Box,
 } from "@mantine/core";
 import Image from "next/image";
-import { IconPhoto, IconInfoCircle, IconArrowLeft, IconPencil, IconCalendarCheck, IconCircleCheck, IconTrash } from "@tabler/icons-react";
+import { IconPhoto, IconInfoCircle, IconArrowLeft, IconPencil, IconCalendarCheck, IconCircleCheck } from "@tabler/icons-react";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
+import { DeleteButton } from "./DeleteButton.client";
 
 const shadowLabel = { label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } };
 
@@ -97,17 +98,14 @@ export default async function InzeratDetailPage({
           {t("page.inzeratDetail.backToList")}
         </Link>
         <Group gap="sm">
-          <form action={handleDelete}>
-            <Button
-              type="submit"
-               variant="gradient"
-               gradient={{ from: 'rgba(255, 0, 0, 1)', to: 'orange', deg: 275 }}
-               styles={{label: {textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",},}}
-              leftSection={<IconTrash size={16} />}
-            >
-              {t("page.inzeratDetail.deleteButton")}
-            </Button>
-          </form>
+          <DeleteButton
+            label={t("page.inzeratDetail.deleteButton")}
+            confirmTitle={t("page.inzeratDetail.deleteConfirmTitle")}
+            confirmMessage={t("page.inzeratDetail.deleteConfirmMessage")}
+            confirmYes={t("common.yes")}
+            confirmNo={t("common.no")}
+            action={handleDelete}
+          />
           <Link href={`/${locale}/inzeraty/${id}/upravit`}>
             <Button
               styles={shadowLabel}

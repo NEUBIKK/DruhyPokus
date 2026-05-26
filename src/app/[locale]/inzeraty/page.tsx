@@ -5,12 +5,11 @@ import { items } from "@/db/schemas";
 import { SimpleGrid, Title, Text, Stack, Group, Button } from "@mantine/core";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { eq, like, not, and, or, isNull } from "drizzle-orm";
+import { eq, like, not, and, or, isNull, gte, lte, asc } from "drizzle-orm";
 import { Suspense } from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations();
-
   return {
     title: t("page.home.title"),
     description: t("page.home.description"),
@@ -22,9 +21,12 @@ interface FetchListingsParams {
   category: string;
   state: string;
   price: string;
+  priceMin?: number;
+  priceMax?: number;
+  sort?: string;
 }
 
-function fetchListings({ query, category, state, price }: FetchListingsParams) {
+function fetchListings({ query, category, state, price, priceMin, priceMax, sort }: FetchListingsParams) {
   const conditions = [];
 
   if (query) {
@@ -47,14 +49,32 @@ function fetchListings({ query, category, state, price }: FetchListingsParams) {
     }
   }
 
-  const results = db
+  if (priceMin !== undefined) {
+    conditions.push(gte(items.price, priceMin));
+  }
+
+  if (priceMax !== undefined && priceMax < 5000) {
+    conditions.push(lte(items.price, priceMax));
+  }
+
+  const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+  if (sort === "price_asc") {
+    return db
+      .select()
+      .from(items)
+      .where(where)
+      .orderBy(asc(items.price))
+      .limit(30)
+      .all();
+  }
+
+  return db
     .select()
     .from(items)
-    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .where(where)
     .limit(30)
     .all();
-
-  return results;
 }
 
 export default async function Page(props: PageProps<"/[locale]/inzeraty">) {
@@ -65,20 +85,23 @@ export default async function Page(props: PageProps<"/[locale]/inzeraty">) {
   const category = (searchParams.category as string) ?? "all";
   const state = (searchParams.state as string) ?? "all";
   const price = (searchParams.price as string) ?? "all";
+  const sort = (searchParams.sort as string) ?? "";
+  const priceMin = searchParams.priceMin ? Number(searchParams.priceMin) : undefined;
+  const priceMax = searchParams.priceMax ? Number(searchParams.priceMax) : undefined;
 
-  const listings_to_show = fetchListings({ query: q, category, state, price });
+  const listings_to_show = fetchListings({ query: q, category, state, price, priceMin, priceMax, sort });
 
   return (
     <Stack gap="md">
-      <Title>
-        {t("page.inzeraty.title")}
-      </Title>
+      <Title>{t("page.inzeraty.title")}</Title>
       <Group justify="space-between">
-        <Text c="dimmed">
-          {t("page.inzeraty.description")}
-        </Text>
-        <Button component="a" href="/inzeraty/novy" variant="gradient"
-          gradient={{ from: "yellow", to: "orange", deg: 275 }}>
+        <Text c="dimmed">{t("page.inzeraty.description")}</Text>
+        <Button
+          component="a"
+          href="/inzeraty/novy"
+          variant="gradient"
+          gradient={{ from: "yellow", to: "orange", deg: 275 }}
+        >
           {t("page.inzeraty.buttonForm")}
         </Button>
       </Group>
