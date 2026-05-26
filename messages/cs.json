@@ -1,6 +1,8 @@
 {
   "common": {
     "free": "Zdarma",
+    "yes": "Ano",
+    "no": "Ne",
     "pageLogo": {
       "ariaLabel": "Logo značky Blogic"
     },
@@ -21,6 +23,8 @@
     },
 
     "inzeratDetail" :{
+    "deleteConfirmTitle": "Opravdu chcete smazat tento inzerát?",
+    "deleteConfirmMessage": "Smazaný inzerát nebude možné obnovit.",
     "deleteButton": "Smazat inzerát",
     "backToList": "Zpět na seznam",
     "editButton": "Upravit inzerát",
@@ -43,6 +47,11 @@
   },
   "components": {
     "InzeratSearchBar": {
+      "sortCheapest": "Nejlevnější",
+      "priceAny": "Cena: libovolná",
+      "priceRange": "Rozsah ceny",
+      "clearAll" : "Vyčistit vše",
+      "filtersLabel": "Filtry",
       "placeholder": "Hledat inzeráty...",
       "categoryPlaceholder": "Kategorie",
       "categoryAll": "Stav",
