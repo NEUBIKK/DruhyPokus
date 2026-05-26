@@ -4,12 +4,12 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { items } from "@/db/schemas";
 import {
-  Card, Group, Title, Text, Badge, Button,
+  Card, Group, Title, Text, Badge,
   Stack, Alert, Center, ThemeIcon, Box,
 } from "@mantine/core";
 import Image from "next/image";
 import { IconPhoto, IconInfoCircle, IconArrowLeft, IconPencil, IconCalendarCheck, IconCircleCheck } from "@tabler/icons-react";
-import Link from "next/link";
+import { HoverButton } from "@/components/ui/HoverButton";
 import { revalidatePath } from "next/cache";
 import { DeleteButton } from "./DeleteButton.client";
 
@@ -83,20 +83,25 @@ export default async function InzeratDetailPage({
 
       {/* Horní lišta — Zpět + Smazat + Upravit */}
       <Group justify="space-between">
-        <Link
-          href={`/${locale}/inzeraty`}
-          style={{
-            color: "var(--mantine-color-red-6)",
-            fontSize: "var(--mantine-font-size-sm)",
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            textDecoration: "none",
-          }}
-        >
-          <IconArrowLeft size={16} />
-          {t("page.inzeratDetail.backToList")}
-        </Link>
+          <HoverButton
+            href={`/${locale}/inzeraty`}
+            variant="light"
+            label={t("page.inzeratDetail.backToSeznam")}
+            leftSection={<IconArrowLeft size={16} />}
+            styles={{
+              root: {
+                backgroundColor: "white",
+                color: "darkorange",
+                textDecoration: "none",
+              },
+              label: {
+                color: "darkorange",
+              },
+              leftSection: {
+                color: "darkorange",
+              },
+            }}
+          />
         <Group gap="sm">
           <DeleteButton
             label={t("page.inzeratDetail.deleteButton")}
@@ -106,16 +111,14 @@ export default async function InzeratDetailPage({
             confirmNo={t("common.no")}
             action={handleDelete}
           />
-          <Link href={`/${locale}/inzeraty/${id}/upravit`}>
-            <Button
-              styles={shadowLabel}
-              variant="gradient"
-              gradient={{ from: "rgb(0, 204, 255)", to: "blue", deg: 275 }}
-              leftSection={<IconPencil size={16} />}
-            >
-              {t("page.inzeratDetail.editButton")}
-            </Button>
-          </Link>
+          <HoverButton
+            href={`/${locale}/inzeraty/${id}/upravit`}
+            label={t("page.inzeratDetail.editButton")}
+            styles={shadowLabel}
+            variant="gradient"
+            gradient={{ from: "rgb(0, 204, 255)", to: "blue", deg: 275 }}
+            leftSection={<IconPencil size={16} />}
+          />
         </Group>
       </Group>
 
@@ -248,16 +251,15 @@ export default async function InzeratDetailPage({
                       transition: "opacity 0.2s",
                     }}
                   >
-                    <Button
+                    <HoverButton
                       type="submit"
                       fullWidth
+                      label={t("page.inzeratDetail.reserveButton")}
                       variant="gradient"
                       gradient={{ from: "yellow", to: "orange", deg: 275 }}
                       styles={shadowLabel}
                       leftSection={<IconCalendarCheck size={16} />}
-                    >
-                      {t("page.inzeratDetail.reserveButton")}
-                    </Button>
+                    />
                   </form>
                   <form
                     action={canSell ? setProdano : undefined}
@@ -268,16 +270,15 @@ export default async function InzeratDetailPage({
                       transition: "opacity 0.2s",
                     }}
                   >
-                    <Button
+                    <HoverButton
                       type="submit"
                       fullWidth
+                      label={t("page.inzeratDetail.markAsSoldButton")}
                       variant="gradient"
                       gradient={{ from: "gray", to: "darkgray", deg: 275 }}
                       styles={shadowLabel}
                       leftSection={<IconCircleCheck size={16} />}
-                    >
-                      {t("page.inzeratDetail.markAsSoldButton")}
-                    </Button>
+                    />
                   </form>
                 </Group>
               </Box>

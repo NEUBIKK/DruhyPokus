@@ -131,9 +131,32 @@ export default function Page() {
             </Text>
           </Stack>
           <Link href="/inzeraty">
-            <Button variant="light" color="orange" bg="var(--mantine-color-default)" radius="md" leftSection={<ArrowLeft size={16} />}>
-              Zpět
-            </Button>
+          <Button
+          variant="light"
+          color="darkorange"
+          bg="var(--mantine-color-default)"
+          radius="md"
+          leftSection={<ArrowLeft size={16} />}
+          style={{
+          transition:
+          "transform 0.2s ease, outline 0.2s ease, box-shadow 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "scale(1.01)";
+          e.currentTarget.style.outline =
+          "1px solid rgba(255, 165, 0, 0.5)";
+          e.currentTarget.style.boxShadow =
+          "0 4px 12px rgba(0, 0, 0, 0.12)";
+          }}
+          onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "scale(1)";
+          e.currentTarget.style.outline =
+          "1px solid transparent";
+          e.currentTarget.style.boxShadow = "none";
+          }}
+          >
+          Zpět
+          </Button>
           </Link>
         </Group>
 
@@ -337,13 +360,33 @@ export default function Page() {
               </Paper>
 
               <Group justify="flex-end">
-                <Button
-                  size="md" radius="xl" color="orange" px="xl"
-                  type="submit"
-                  loading={loading}
-                >
-                  + Přidat nabídku
-                </Button>
+              <Button
+              size="md"
+              radius="xl"
+              color="orange"
+              px="xl"
+              type="submit"
+              loading={loading}
+              style={{
+                transition:
+                  "transform 0.2s ease, outline 0.2s ease, box-shadow 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.01)";
+                e.currentTarget.style.outline =
+                  "1px solid rgba(255, 165, 0, 0.5)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 12px rgba(0, 0, 0, 0.12)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.outline =
+                  "1px solid transparent";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+              >
+              + Přidat nabídku
+              </Button>
               </Group>
 
             </Stack>

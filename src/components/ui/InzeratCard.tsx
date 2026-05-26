@@ -93,6 +93,7 @@ export function InzeratCard(props: {
           </Group>
         </Card.Section>
 
+
         {/* Popis */}
         <Card.Section px="md" pb="xs">
           <Text c="dimmed" size="sm" lineClamp={2}>
@@ -148,6 +149,7 @@ export function InzeratCard(props: {
               transition: "opacity 0.2s ease",
               opacity: hovered ? 1 : 0.85,
             }}
+            styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
           >
             {t("components.inzeratCard.detailButton")}
           </Button>

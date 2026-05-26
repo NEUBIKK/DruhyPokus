@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import Image from "next/image";
 import { IconPhoto, IconArrowLeft } from "@tabler/icons-react";
-import Link from "next/link";
+import { HoverButton } from "@/components/ui/HoverButton";
 import { EditForm } from "./EditForm";
 
 export default async function UpravitPage({
@@ -32,20 +32,30 @@ export default async function UpravitPage({
     <Stack gap="md" p="md">
 
       <Group justify="space-between">
-        <Link
+        <HoverButton
           href={`/${locale}/inzeraty/${id}`}
-          style={{
-            color: "var(--mantine-color-red-6)",
-            fontSize: "var(--mantine-font-size-sm)",
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            textDecoration: "none",
+          label={t("page.inzeratDetail.backToList")}
+          leftSection={<IconArrowLeft size={16} />}
+          variant="subtle"
+          styles={{
+            root: {
+              color: "var(--mantine-color-orange-6)",
+              fontSize: "var(--mantine-font-size-sm)",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              textDecoration: "none",
+              backgroundColor: "transparent",
+              padding: "0 15px",
+            },
+            label: {
+              color: "var(--mantine-color-orange-6)",
+            },
+            leftSection: {
+              color: "var(--mantine-color-orange-6)",
+            },
           }}
-        >
-          <IconArrowLeft size={16} />
-          {t("page.inzeratDetail.backToList")}
-        </Link>
+        />
         <Title order={3}>{t("page.upravitInzerat.title")}</Title>
       </Group>
 

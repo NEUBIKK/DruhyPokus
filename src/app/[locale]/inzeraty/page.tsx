@@ -98,6 +98,7 @@ export default async function Page(props: PageProps<"/[locale]/inzeraty">) {
       <Group justify="space-between">
         <Text c="dimmed">{t("page.inzeraty.description")}</Text>
         <HoverButton
+          styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
           href="/inzeraty/novy"
           label={t("page.inzeraty.buttonForm")}
         />
