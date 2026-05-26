@@ -2,7 +2,9 @@
 
 import { Button, Text, Group, ThemeIcon, Stack, Divider } from "@mantine/core";
 import { modals } from "@mantine/modals";
+import { useHover } from "@mantine/hooks";
 import { IconTrash, IconCheck, IconX } from "@tabler/icons-react";
+import { HoverButton } from "@/components/ui/HoverButton";
 
 interface DeleteButtonProps {
   label: string;
@@ -13,6 +15,13 @@ interface DeleteButtonProps {
   action: () => Promise<void>;
 }
 
+const hoverButtonStyle = (hovered: boolean) => ({
+  transition: "transform 0.2s ease, outline 0.2s ease, box-shadow 0.2s ease",
+  transform: hovered ? "scale(1.015)" : "scale(1)",
+  outline: hovered ? "1px solid rgba(255, 165, 0, 0.5)" : "1px solid transparent",
+  boxShadow: hovered ? "0 2px 6px rgba(0, 0, 0, 0.1)" : "none",
+});
+
 export function DeleteButton({
   label,
   confirmTitle,
@@ -21,6 +30,8 @@ export function DeleteButton({
   confirmNo,
   action,
 }: DeleteButtonProps) {
+  const deleteHover = useHover();
+
   const handleClick = () => {
     modals.openConfirmModal({
       withCloseButton: false,
@@ -60,32 +71,30 @@ export function DeleteButton({
           </Text>
           <Divider w="100%" opacity={0.3} />
           <Group grow gap="sm" w="100%">
-            <Button
+            <HoverButton
+              fullWidth
+              label={confirmNo}
+              leftSection={<IconX size={15} />}
               variant="gradient"
               gradient={{ from: "gray", to: "darkgray", deg: 275 }}
-              radius="md"
-              leftSection={<IconX size={15} />}
               styles={{
                 root: { boxShadow: "0 2px 10px rgba(0,0,0,0.2)" },
                 label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" },
               }}
               onClick={() => modals.closeAll()}
-            >
-              {confirmNo}
-            </Button>
-            <Button
+            />
+            <HoverButton
+              fullWidth
+              label={confirmYes}
+              leftSection={<IconCheck size={15} />}
               variant="gradient"
               gradient={{ from: "rgba(255, 0, 0, 1)", to: "orange", deg: 275 }}
-              radius="md"
-              leftSection={<IconCheck size={15} />}
               styles={{
                 root: { boxShadow: "0 2px 10px rgba(255,80,0,0.35)" },
                 label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" },
               }}
               onClick={() => { modals.closeAll(); action(); }}
-            >
-              {confirmYes}
-            </Button>
+            />
           </Group>
         </Stack>
       ),
@@ -96,14 +105,17 @@ export function DeleteButton({
   };
 
   return (
-    <Button
-      onClick={handleClick}
-      variant="gradient"
-      gradient={{ from: "rgba(255, 0, 0, 1)", to: "orange", deg: 275 }}
-      styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
-      leftSection={<IconTrash size={16} />}
-    >
-      {label}
-    </Button>
+    <div ref={deleteHover.ref}>
+      <Button
+        onClick={handleClick}
+        variant="gradient"
+        gradient={{ from: "rgba(255, 0, 0, 1)", to: "orange", deg: 275 }}
+        styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
+        leftSection={<IconTrash size={16} />}
+        style={hoverButtonStyle(deleteHover.hovered)}
+      >
+        {label}
+      </Button>
+    </div>
   );
 }

@@ -1,8 +1,9 @@
 import { InzeratCard } from "@/components/ui/InzeratCard";
 import { InzeratSearchBar } from "@/components/ui/InzeratSearchBar";
+import { HoverButton } from "@/components/ui/HoverButton";
 import { db } from "@/db";
 import { items } from "@/db/schemas";
-import { SimpleGrid, Title, Text, Stack, Group, Button } from "@mantine/core";
+import { SimpleGrid, Title, Text, Stack, Group } from "@mantine/core";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { eq, like, not, and, or, isNull, gte, lte, asc } from "drizzle-orm";
@@ -96,14 +97,11 @@ export default async function Page(props: PageProps<"/[locale]/inzeraty">) {
       <Title>{t("page.inzeraty.title")}</Title>
       <Group justify="space-between">
         <Text c="dimmed">{t("page.inzeraty.description")}</Text>
-        <Button
-          component="a"
+        <HoverButton
+          styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
           href="/inzeraty/novy"
-          variant="gradient"
-          gradient={{ from: "yellow", to: "orange", deg: 275 }}
-        >
-          {t("page.inzeraty.buttonForm")}
-        </Button>
+          label={t("page.inzeraty.buttonForm")}
+        />
       </Group>
 
       <Suspense fallback={null}>

@@ -2,23 +2,18 @@
 
 import { useTranslations, useLocale } from "next-intl";
 import { Card, Badge, Group, Title, Text, Button, AspectRatio } from "@mantine/core";
+import { useHover } from "@mantine/hooks";
 import Link from "next/link";
 
 function getStateBadgeProps(state?: string) {
   switch (state) {
     case "Rezervováno":
-      return {
-        gradient: { from: "violet", to: "rgba(212, 138, 255, 1)", deg: 275 },
-      };
+      return { gradient: { from: "violet", to: "rgba(212, 138, 255, 1)", deg: 275 } };
     case "Prodáno / Předáno":
-      return {
-        gradient: { from: "gray", to: "darkgray", deg: 275 },
-      };
+      return { gradient: { from: "gray", to: "darkgray", deg: 275 } };
     case "Dostupné":
     default:
-      return {
-        gradient: { from: "green", to: "lime", deg: 275 },
-      };
+      return { gradient: { from: "green", to: "lime", deg: 275 } };
   }
 }
 
@@ -34,14 +29,31 @@ export function InzeratCard(props: {
 }) {
   const t = useTranslations();
   const locale = useLocale();
+  const { hovered, ref } = useHover();
 
   const isFree = props.price === 0 || props.price === null || props.price === undefined;
   const stateBadgeProps = getStateBadgeProps(props.state);
 
   return (
-    <Link href={`/${locale}/inzeraty/${props.id}`} style={{ textDecoration: "none" }}>
-      <Card radius="md" withBorder p="md" style={{ cursor: "pointer", height: "100%" }}>
-
+    <Link href={`/${locale}/inzeraty/${props.id}`} style={{ textDecoration: "none", display: "block", height: "100%" }}>
+      <Card
+        ref={ref}
+        radius="md"
+        withBorder
+        p="md"
+        style={{
+          cursor: "pointer",
+          height: "100%",
+          transform: hovered ? "translateY(-4px) scale(1.01)" : "translateY(0px) scale(1)",
+          boxShadow: hovered
+            ? "0 12px 32px rgba(0,0,0,0.13)"
+            : "0 1px 4px rgba(0,0,0,0.06)",
+          borderColor: hovered
+            ? "var(--mantine-color-orange-4)"
+            : "var(--mantine-color-default-border)",
+          transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
+        }}
+      >
         {/* Foto */}
         {props.imageUrl && (
           <Card.Section px="md" pt="md" pb="xs">
@@ -55,6 +67,8 @@ export function InzeratCard(props: {
                   objectFit: "cover",
                   borderRadius: "var(--mantine-radius-md)",
                   display: "block",
+                  transition: "transform 0.2s ease",
+                  transform: hovered ? "scale(1.03)" : "scale(1)",
                 }}
               />
             </AspectRatio>
@@ -71,17 +85,14 @@ export function InzeratCard(props: {
               variant="gradient"
               gradient={stateBadgeProps.gradient}
               c="white"
-              styles={{
-                label: {
-                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
-                },
-              }}
+              styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
               style={{ flexShrink: 0 }}
             >
               {props.state}
             </Badge>
           </Group>
         </Card.Section>
+
 
         {/* Popis */}
         <Card.Section px="md" pb="xs">
@@ -100,11 +111,7 @@ export function InzeratCard(props: {
               <Badge
                 variant="gradient"
                 gradient={{ from: "green", to: "lime", deg: 275 }}
-                styles={{
-                  label: {
-                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
-                  },
-                }}
+                styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
               >
                 {t("common.free")}
               </Badge>
@@ -112,11 +119,7 @@ export function InzeratCard(props: {
               <Badge
                 variant="gradient"
                 gradient={{ from: "red", to: "orange", deg: 275 }}
-                styles={{
-                  label: {
-                    textShadow: "0 1px 2px rgba(0, 0, 0, 0.4)",
-                  },
-                }}
+                styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
               >
                 {t("common.currency.prefix")}
                 {props.price}
@@ -142,11 +145,15 @@ export function InzeratCard(props: {
             gradient={{ from: "yellow", to: "orange", deg: 275 }}
             color="orange"
             component="div"
+            style={{
+              transition: "opacity 0.2s ease",
+              opacity: hovered ? 1 : 0.85,
+            }}
+            styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
           >
             {t("components.inzeratCard.detailButton")}
           </Button>
         </Card.Section>
-
       </Card>
     </Link>
   );
