@@ -7,7 +7,8 @@ import {
   Box, Image, Paper, Divider,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { ArrowLeft, Upload, X, Image as ImageIcon } from "lucide-react";
+import { useHover } from "@mantine/hooks";
+import { ArrowLeft, Upload } from "lucide-react";
 import { useState, useRef } from "react";
 
 export default function Page() {
@@ -19,6 +20,16 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [negotiable, setNegotiable] = useState(false);
+
+  const titleHover = useHover();
+  const descriptionHover = useHover();
+  const categoryHover = useHover();
+  const priceHover = useHover();
+  const nameHover = useHover();
+  const emailHover = useHover();
+  const statusHover = useHover();
+  const checkboxHover = useHover();
+  const photoHover = useHover();
 
   const form = useForm({
     initialValues: {
@@ -61,9 +72,7 @@ export default function Page() {
 
   const handleSubmit = async (values: typeof form.values) => {
     setServerError(null);
-
     setLoading(true);
-
     try {
       const res = await fetch("/api/inzeraty", {
         method: "POST",
@@ -102,6 +111,13 @@ export default function Page() {
     </span>
   );
 
+  const hoverInputStyles = (hovered: boolean) => ({
+    input: {
+      borderColor: hovered ? "var(--mantine-color-orange-3)" : undefined,
+      transition: "border-color 0.18s ease",
+    },
+  });
+
   const sectionTitleProps = { fw: 700, size: "17px", mb: "md" } as const;
 
   return (
@@ -129,29 +145,38 @@ export default function Page() {
               <Box>
                 <Text {...sectionTitleProps}>Základní informace</Text>
                 <Stack gap="md">
-                  <TextInput
-                    size="md" radius="md"
-                    label={requiredLabel("Název věci")}
-                    withAsterisk={false}
-                    placeholder="Např. Konferenční stolek"
-                    {...form.getInputProps("title")}
-                  />
-                  <Textarea
-                    radius="md"
-                    label={<span style={{ fontSize: "14px", fontWeight: 500 }}>Popis</span>}
-                    placeholder="Popiš stav, rozměry, místo předání..."
-                    minRows={4}
-                    autosize
-                    {...form.getInputProps("description")}
-                  />
-                  <Select
-                    size="md" radius="md"
-                    label={requiredLabel("Kategorie")}
-                    withAsterisk={false}
-                    placeholder="Vyber kategorii"
-                    data={["Nábytek", "Dětské věci", "Oblečení", "Elektronika", "Knihy", "Ostatní"]}
-                    {...form.getInputProps("category")}
-                  />
+                  <div ref={titleHover.ref}>
+                    <TextInput
+                      size="md" radius="md"
+                      label={requiredLabel("Název věci")}
+                      withAsterisk={false}
+                      placeholder="Např. Konferenční stolek"
+                      styles={hoverInputStyles(titleHover.hovered)}
+                      {...form.getInputProps("title")}
+                    />
+                  </div>
+                  <div ref={descriptionHover.ref}>
+                    <Textarea
+                      radius="md"
+                      label={<span style={{ fontSize: "14px", fontWeight: 500 }}>Popis</span>}
+                      placeholder="Popiš stav, rozměry, místo předání..."
+                      minRows={4}
+                      autosize
+                      styles={hoverInputStyles(descriptionHover.hovered)}
+                      {...form.getInputProps("description")}
+                    />
+                  </div>
+                  <div ref={categoryHover.ref}>
+                    <Select
+                      size="md" radius="md"
+                      label={requiredLabel("Kategorie")}
+                      withAsterisk={false}
+                      placeholder="Vyber kategorii"
+                      data={["Nábytek", "Dětské věci", "Oblečení", "Elektronika", "Knihy", "Ostatní"]}
+                      styles={hoverInputStyles(categoryHover.hovered)}
+                      {...form.getInputProps("category")}
+                    />
+                  </div>
                 </Stack>
               </Box>
 
@@ -161,25 +186,36 @@ export default function Page() {
               <Box>
                 <Text {...sectionTitleProps}>Cena</Text>
                 <Group align="flex-end" gap="md">
-                  <NumberInput
-                    radius="md"
-                    label={<span style={{ fontSize: "14px", fontWeight: 500 }}>Cena</span>}
-                    placeholder={negotiable ? "Nabídka je zdarma" : "0 Kč"}
-                    suffix=" Kč"
-                    min={0}
-                    thousandSeparator=" "
-                    disabled={negotiable}
-                    w={200}
-                    {...form.getInputProps("price")}
-                  />
-                  <Box pb={form.errors.price ? 22 : 8}>
-                    <Checkbox
-                      label="Nabídka je zdarma"
-                      checked={negotiable}
-                      color="orange"
-                      onChange={(e) => setNegotiable(e.currentTarget.checked)}
-                      styles={{ label: { fontWeight: 600, fontSize: "14px" } }}
+                  <div ref={priceHover.ref}>
+                    <NumberInput
+                      radius="md"
+                      label={<span style={{ fontSize: "14px", fontWeight: 500 }}>Cena</span>}
+                      placeholder={negotiable ? "Nabídka je zdarma" : "0 Kč"}
+                      suffix=" Kč"
+                      min={0}
+                      thousandSeparator=" "
+                      disabled={negotiable}
+                      w={200}
+                      styles={hoverInputStyles(priceHover.hovered)}
+                      {...form.getInputProps("price")}
                     />
+                  </div>
+                  <Box pb={form.errors.price ? 22 : 8}>
+                    <div ref={checkboxHover.ref}>
+                      <Checkbox
+                        label="Nabídka je zdarma"
+                        checked={negotiable}
+                        color="orange"
+                        onChange={(e) => setNegotiable(e.currentTarget.checked)}
+                        styles={{
+                          label: { fontWeight: 600, fontSize: "14px" },
+                          input: {
+                            borderColor: checkboxHover.hovered ? "var(--mantine-color-orange-3)" : undefined,
+                            transition: "border-color 0.18s ease",
+                          },
+                        }}
+                      />
+                    </div>
                   </Box>
                 </Group>
               </Box>
@@ -190,19 +226,25 @@ export default function Page() {
               <Box>
                 <Text {...sectionTitleProps}>Kontaktní údaje</Text>
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md" verticalSpacing="md">
-                  <TextInput
-                    radius="md"
-                    label={requiredLabel("Jméno kontaktu")}
-                    withAsterisk={false}
-                    placeholder="Tvé jméno"
-                    {...form.getInputProps("name")}
-                  />
-                  <TextInput
-                    radius="md"
-                    label={<span style={{ fontSize: "14px", fontWeight: 500 }}>E-mail</span>}
-                    placeholder="jmeno@example.com"
-                    {...form.getInputProps("email")}
-                  />
+                  <div ref={nameHover.ref}>
+                    <TextInput
+                      radius="md"
+                      label={requiredLabel("Jméno kontaktu")}
+                      withAsterisk={false}
+                      placeholder="Tvé jméno"
+                      styles={hoverInputStyles(nameHover.hovered)}
+                      {...form.getInputProps("name")}
+                    />
+                  </div>
+                  <div ref={emailHover.ref}>
+                    <TextInput
+                      radius="md"
+                      label={<span style={{ fontSize: "14px", fontWeight: 500 }}>E-mail</span>}
+                      placeholder="jmeno@example.com"
+                      styles={hoverInputStyles(emailHover.hovered)}
+                      {...form.getInputProps("email")}
+                    />
+                  </div>
                 </SimpleGrid>
               </Box>
 
@@ -213,25 +255,30 @@ export default function Page() {
                 <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl">
                   <Box>
                     <Text {...sectionTitleProps}>Stav nabídky</Text>
-                    <Select
-                      size="md" radius="md"
-                      placeholder="Vyber stav"
-                      data={["Dostupné", "Rezervováno", "Prodáno / Předáno"]}
-                      {...form.getInputProps("status")}
-                    />
+                    <div ref={statusHover.ref}>
+                      <Select
+                        size="md" radius="md"
+                        placeholder="Vyber stav"
+                        data={["Dostupné", "Rezervováno", "Prodáno / Předáno"]}
+                        styles={hoverInputStyles(statusHover.hovered)}
+                        {...form.getInputProps("status")}
+                      />
+                    </div>
                   </Box>
 
                   <Box>
                     <Text {...sectionTitleProps}>Fotografie</Text>
                     <Box
+                      ref={photoHover.ref}
                       onClick={() => fileInputRef.current?.click()}
                       style={{
-                        border: "2px dashed #fdba74",
+                        border: photoHover.hovered ? "2px dashed var(--mantine-color-orange-3)" : "2px dashed #fdba74",
                         background: "var(--mantine-color-body)",
                         borderRadius: "12px",
                         padding: "16px",
                         cursor: "pointer",
                         textAlign: "center",
+                        transition: "border-color 0.18s ease",
                       }}
                     >
                       <input

@@ -13,11 +13,30 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 const PRICE_MIN = 0;
 const PRICE_MAX = 5000;
 
+const inputHoverStyle = {
+  transition: "box-shadow 0.18s ease, border-color 0.18s ease",
+};
+
+function useFieldHover() {
+  const [hovered, setHovered] = useState(false);
+  return {
+    hovered,
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => setHovered(false),
+  };
+}
+
 export function InzeratSearchBar() {
   const t = useTranslations();
   const Router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+
+  const searchHover = useFieldHover();
+  const categoryHover = useFieldHover();
+  const stateHover = useFieldHover();
+  const sliderIconHover = useFieldHover();
+  const sortIconHover = useFieldHover();
 
   const initialMin = Number(searchParams.get("priceMin") ?? PRICE_MIN);
   const initialMax = Number(searchParams.get("priceMax") ?? PRICE_MAX);
@@ -81,9 +100,10 @@ export function InzeratSearchBar() {
 
   const isPriceActive = priceRange[0] !== PRICE_MIN || priceRange[1] !== PRICE_MAX;
 
+  const fieldShadow = "0 2px 8px rgba(0,0,0,0.10)";
+
   return (
     <Box>
-      {/* CSS grid — nikdy se nemění bez ohledu na SegmentedControl */}
       <div
         style={{
           display: "grid",
@@ -92,48 +112,100 @@ export function InzeratSearchBar() {
           alignItems: "center",
         }}
       >
-        <TextInput
-          placeholder={t("components.InzeratSearchBar.placeholder")}
-          leftSection={<Search size={14} />}
-          rightSection={
-            searchParams.get("q") ? (
-              <X
-                size={13}
-                style={{ cursor: "pointer", color: "var(--mantine-color-dimmed)" }}
-                onClick={() => clearParam("q")}
-              />
-            ) : null
-          }
-          value={searchParams.get("q") ?? ""}
-          onChange={(e) => updateParams("q", e.target.value)}
-          radius="md"
-          size="sm"
-        />
+        {/* Search input */}
+        <div
+          onMouseEnter={searchHover.onMouseEnter}
+          onMouseLeave={searchHover.onMouseLeave}
+          style={{
+            borderRadius: "var(--mantine-radius-md)",
+            boxShadow: searchHover.hovered ? fieldShadow : "none",
+            ...inputHoverStyle,
+          }}
+        >
+          <TextInput
+            placeholder={t("components.InzeratSearchBar.placeholder")}
+            leftSection={<Search size={14} />}
+            rightSection={
+              searchParams.get("q") ? (
+                <X
+                  size={13}
+                  style={{ cursor: "pointer", color: "var(--mantine-color-dimmed)" }}
+                  onClick={() => clearParam("q")}
+                />
+              ) : null
+            }
+            value={searchParams.get("q") ?? ""}
+            onChange={(e) => updateParams("q", e.target.value)}
+            radius="md"
+            size="sm"
+            styles={{
+              input: {
+                borderColor: searchHover.hovered ? "var(--mantine-color-orange-3)" : undefined,
+                transition: "border-color 0.18s ease",
+              },
+            }}
+          />
+        </div>
 
-        <Select
-          placeholder={t("components.InzeratSearchBar.categoryPlaceholder")}
-          leftSection={<LayoutGrid size={13} />}
-          data={["Nábytek", "Dětské věci", "Oblečení", "Elektronika", "Knihy", "Ostatní"]}
-          value={searchParams.get("category") ?? null}
-          clearable
-          onClear={() => clearParam("category")}
-          onChange={(value) => updateParams("category", value ?? "all")}
-          radius="md"
-          size="sm"
-        />
+        {/* Category select */}
+        <div
+          onMouseEnter={categoryHover.onMouseEnter}
+          onMouseLeave={categoryHover.onMouseLeave}
+          style={{
+            borderRadius: "var(--mantine-radius-md)",
+            boxShadow: categoryHover.hovered ? fieldShadow : "none",
+            ...inputHoverStyle,
+          }}
+        >
+          <Select
+            placeholder={t("components.InzeratSearchBar.categoryPlaceholder")}
+            leftSection={<LayoutGrid size={13} />}
+            data={["Nábytek", "Dětské věci", "Oblečení", "Elektronika", "Knihy", "Ostatní"]}
+            value={searchParams.get("category") ?? null}
+            clearable
+            onClear={() => clearParam("category")}
+            onChange={(value) => updateParams("category", value ?? "all")}
+            radius="md"
+            size="sm"
+            styles={{
+              input: {
+                borderColor: categoryHover.hovered ? "var(--mantine-color-orange-3)" : undefined,
+                transition: "border-color 0.18s ease",
+              },
+            }}
+          />
+        </div>
 
-        <Select
-          placeholder={t("components.InzeratSearchBar.categoryAll")}
-          leftSection={<Tag size={13} />}
-          data={["Dostupné", "Prodáno / Předáno", "Prodáno"]}
-          value={searchParams.get("state") ?? null}
-          clearable
-          onClear={() => clearParam("state")}
-          onChange={(value) => updateParams("state", value ?? "all")}
-          radius="md"
-          size="sm"
-        />
+        {/* State select */}
+        <div
+          onMouseEnter={stateHover.onMouseEnter}
+          onMouseLeave={stateHover.onMouseLeave}
+          style={{
+            borderRadius: "var(--mantine-radius-md)",
+            boxShadow: stateHover.hovered ? fieldShadow : "none",
+            ...inputHoverStyle,
+          }}
+        >
+          <Select
+            placeholder={t("components.InzeratSearchBar.categoryAll")}
+            leftSection={<Tag size={13} />}
+            data={["Dostupné", "Prodáno / Předáno", "Prodáno"]}
+            value={searchParams.get("state") ?? null}
+            clearable
+            onClear={() => clearParam("state")}
+            onChange={(value) => updateParams("state", value ?? "all")}
+            radius="md"
+            size="sm"
+            styles={{
+              input: {
+                borderColor: stateHover.hovered ? "var(--mantine-color-orange-3)" : undefined,
+                transition: "border-color 0.18s ease",
+              },
+            }}
+          />
+        </div>
 
+        {/* Icon buttons */}
         <div style={{ display: "flex", gap: 4, justifyContent: "flex-end" }}>
           <Tooltip label={t("components.InzeratSearchBar.priceRange") ?? "Rozsah ceny"} withArrow>
             <ActionIcon
@@ -142,6 +214,13 @@ export function InzeratSearchBar() {
               radius="md"
               size="lg"
               onClick={handlePriceSliderToggle}
+              onMouseEnter={sliderIconHover.onMouseEnter}
+              onMouseLeave={sliderIconHover.onMouseLeave}
+              style={{
+                transform: sliderIconHover.hovered ? "translateY(-1px)" : "translateY(0)",
+                boxShadow: sliderIconHover.hovered ? fieldShadow : "none",
+                transition: "transform 0.18s ease, box-shadow 0.18s ease",
+              }}
             >
               <SlidersHorizontal size={15} />
             </ActionIcon>
@@ -154,6 +233,13 @@ export function InzeratSearchBar() {
               radius="md"
               size="lg"
               onClick={handleSortCheapest}
+              onMouseEnter={sortIconHover.onMouseEnter}
+              onMouseLeave={sortIconHover.onMouseLeave}
+              style={{
+                transform: sortIconHover.hovered ? "translateY(-1px)" : "translateY(0)",
+                boxShadow: sortIconHover.hovered ? fieldShadow : "none",
+                transition: "transform 0.18s ease, box-shadow 0.18s ease",
+              }}
             >
               <ArrowUpNarrowWide size={15} />
             </ActionIcon>
@@ -161,11 +247,12 @@ export function InzeratSearchBar() {
         </div>
       </div>
 
-      {/* SegmentedControl těsně pod, přes celou šířku */}
+      {/* SegmentedControl */}
       <Box mt={8}>
         <SegmentedControl
           fullWidth
           size="xs"
+          className="segmented-hover"
           radius="md"
           data={[
             { label: t("components.InzeratSearchBar.filterAll"), value: "all" },

@@ -6,3 +6,11 @@
 @import "@mantine/core/styles.layer.css";
 
 @import "tailwindcss/utilities.css" layer(utilities);
+
+.segmented-hover .mantine-SegmentedControl-label {
+  transition: color 0.18s ease;
+}
+
+.segmented-hover .mantine-SegmentedControl-control:not([data-active]) .mantine-SegmentedControl-label:hover {
+  color: var(--mantine-color-orange-5);
+}
