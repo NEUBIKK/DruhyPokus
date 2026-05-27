@@ -22,8 +22,8 @@ export function Navbar() {
           </Stack>
           <HoverButton
             label="Odhlásit se"
-            variant="subtle"
-            gradient={{ from: "orange", to: "yellow", deg: 275 }}
+            gradient={{ from: "rgba(0, 47, 255, 1)", to: "rgba(0, 225, 255, 1)", deg: 275 }}
+            styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
             onClick={() => signOut(() => router.push("/inzeraty"))}
           />
         </>
@@ -31,13 +31,14 @@ export function Navbar() {
         <>
           <HoverButton
             label="Přihlásit se"
-            variant="subtle"
-            gradient={{ from: "orange", to: "yellow", deg: 275 }}
+            gradient={{ from: "rgba(0, 47, 255, 1)", to: "rgba(0, 225, 255, 1)", deg: 275 }}
+            styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
             onClick={() => openSignIn()}
           />
           <HoverButton
             label="Registrovat se"
             gradient={{ from: "yellow", to: "orange", deg: 275 }}
+            styles={{ label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } }}
             onClick={() => openSignUp()}
           />
         </>

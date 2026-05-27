@@ -8,10 +8,12 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useHover } from "@mantine/hooks";
+import { useUser } from "@clerk/nextjs";
 import { ArrowLeft, Upload } from "lucide-react";
 import { useState, useRef } from "react";
 
 export default function Page() {
+  const { user } = useUser();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -87,6 +89,7 @@ export default function Page() {
           contactName: values.name,
           email: values.email,
           image: imageBase64,
+          ownerID: user?.id ?? null,
         }),
       });
 

@@ -6,15 +6,23 @@ const intlMiddleware = createMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher([
   '/(.*)/inzeraty/novy',
+  '/api/inzeraty',       // ✅ Opraveno z /api/items na /api/inzeraty
+  '/api/inzeraty/(.*)',  // ✅ Opraveno
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
   if (isProtectedRoute(request)) {
     await auth.protect();
   }
-  return intlMiddleware(request);
+
+  if (!request.nextUrl.pathname.startsWith('/api')) {
+    return intlMiddleware(request);
+  }
 });
 
 export const config = {
-  matcher: "/((?!api|trpc|_next|_vercel|.*\\..*).*)",
+  matcher: [
+    "/((?!api|trpc|_next|_vercel|.*\\..*).*)",
+    "/api/(.*)",
+  ],
 };
