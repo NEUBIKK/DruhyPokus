@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,5 +15,9 @@ interface Props {
 }
 
 export default function RootLayout({ children }: Props) {
-  return children;
+  return (
+    <ClerkProvider>
+      {children}
+    </ClerkProvider>
+  );
 }

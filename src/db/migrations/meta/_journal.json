@@ -22,6 +22,20 @@
       "when": 1779371449687,
       "tag": "0002_keen_diamondback",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1779873798172,
+      "tag": "0003_confused_satana",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1779878777366,
+      "tag": "0004_mixed_praxagora",
+      "breakpoints": true
     }
   ]
 }
