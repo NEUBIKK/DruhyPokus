@@ -1,7 +1,8 @@
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { auth } from "@clerk/nextjs/server";
 import { items } from "@/db/schemas";
 import {
   Card, Group, Title, Text,
@@ -27,6 +28,12 @@ export default async function UpravitPage({
     .get();
 
   if (!item) notFound();
+
+  // Backend guard — nepřihlášen nebo není owner → redirect zpět
+  const { userId } = await auth();
+  if (!userId || item.ownerID !== userId) {
+    redirect(`/${locale}/inzeraty/${id}`);
+  }
 
   return (
     <Stack gap="md" p="md">

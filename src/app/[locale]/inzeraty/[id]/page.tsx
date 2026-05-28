@@ -2,6 +2,7 @@ import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { auth } from "@clerk/nextjs/server";
 import { items } from "@/db/schemas";
 import {
   Card, Group, Title, Text, Badge,
@@ -10,7 +11,6 @@ import {
 import Image from "next/image";
 import { IconPhoto, IconInfoCircle, IconArrowLeft, IconPencil, IconCalendarCheck, IconCircleCheck } from "@tabler/icons-react";
 import { HoverButton } from "@/components/ui/HoverButton";
-import { ImageWithHover } from "@/components/ui/ImageWithHover";
 import { revalidatePath } from "next/cache";
 import { DeleteButton } from "./DeleteButton.client";
 
@@ -56,24 +56,36 @@ export default async function InzeratDetailPage({
 
   if (!item) notFound();
 
+  const { userId } = await auth();
+  const isOwner = !!userId && item.ownerID === userId;
+
   const isFree = item.price === 0 || item.price === null;
   const stateBadgeProps = getStateBadgeProps(item.status);
   const { canReserve, canSell } = getButtonStates(item.status);
 
   async function setRezervorano() {
     "use server";
+    const { userId } = await auth();
+    const current = await db.select().from(items).where(eq(items.id, Number(id))).get();
+    if (!current || current.ownerID === userId) return;
     await db.update(items).set({ status: "Rezervováno" }).where(eq(items.id, Number(id)));
     revalidatePath("/", "layout");
   }
 
   async function setProdano() {
     "use server";
+    const { userId } = await auth();
+    const current = await db.select().from(items).where(eq(items.id, Number(id))).get();
+    if (!current || current.ownerID === userId) return;
     await db.update(items).set({ status: "Prodáno / Předáno" }).where(eq(items.id, Number(id)));
     revalidatePath("/", "layout");
   }
 
   async function handleDelete() {
     "use server";
+    const { userId } = await auth();
+    const current = await db.select().from(items).where(eq(items.id, Number(id))).get();
+    if (!current || current.ownerID !== userId) return;
     await db.delete(items).where(eq(items.id, Number(id)));
     revalidatePath("/", "layout");
     redirect(`/${locale}/inzeraty`);
@@ -84,42 +96,46 @@ export default async function InzeratDetailPage({
 
       {/* Horní lišta — Zpět + Smazat + Upravit */}
       <Group justify="space-between">
-          <HoverButton
-            href={`/${locale}/inzeraty`}
-            variant="light"
-            label={t("page.inzeratDetail.backToSeznam")}
-            leftSection={<IconArrowLeft size={16} />}
-            styles={{
-              root: {
-                backgroundColor: "white",
-                color: "darkorange",
-                textDecoration: "none",
-              },
-              label: {
-                color: "darkorange",
-              },
-              leftSection: {
-                color: "darkorange",
-              },
-            }}
-          />
+        <HoverButton
+          href={`/${locale}/inzeraty`}
+          variant="light"
+          label={t("page.inzeratDetail.backToSeznam")}
+          leftSection={<IconArrowLeft size={16} />}
+          styles={{
+            root: {
+              backgroundColor: "white",
+              color: "darkorange",
+              textDecoration: "none",
+            },
+            label: {
+              color: "darkorange",
+            },
+            leftSection: {
+              color: "darkorange",
+            },
+          }}
+        />
         <Group gap="sm">
-          <DeleteButton
-            label={t("page.inzeratDetail.deleteButton")}
-            confirmTitle={t("page.inzeratDetail.deleteConfirmTitle")}
-            confirmMessage={t("page.inzeratDetail.deleteConfirmMessage")}
-            confirmYes={t("common.yes")}
-            confirmNo={t("common.no")}
-            action={handleDelete}
-          />
-          <HoverButton
-            href={`/${locale}/inzeraty/${id}/upravit`}
-            label={t("page.inzeratDetail.editButton")}
-            styles={shadowLabel}
-            variant="gradient"
-            gradient={{ from: "rgb(0, 204, 255)", to: "blue", deg: 275 }}
-            leftSection={<IconPencil size={16} />}
-          />
+          <div style={{ opacity: isOwner ? 1 : 0.5, pointerEvents: isOwner ? "auto" : "none" }}>
+            <DeleteButton
+              label={t("page.inzeratDetail.deleteButton")}
+              confirmTitle={t("page.inzeratDetail.deleteConfirmTitle")}
+              confirmMessage={t("page.inzeratDetail.deleteConfirmMessage")}
+              confirmYes={t("common.yes")}
+              confirmNo={t("common.no")}
+              action={handleDelete}
+            />
+          </div>
+          <div style={{ opacity: isOwner ? 1 : 0.5, pointerEvents: isOwner ? "auto" : "none" }}>
+            <HoverButton
+              href={`/${locale}/inzeraty/${id}/upravit`}
+              label={t("page.inzeratDetail.editButton")}
+              styles={shadowLabel}
+              variant="gradient"
+              gradient={{ from: "rgb(0, 204, 255)", to: "blue", deg: 275 }}
+              leftSection={<IconPencil size={16} />}
+            />
+          </div>
         </Group>
       </Group>
 
@@ -240,15 +256,15 @@ export default async function InzeratDetailPage({
                 <Text size="sm">{t("page.inzeratDetail.paymentInfo")}</Text>
               </Alert>
 
-              {/* Akční tlačítka */}
+              {/* Akční tlačítka — pouze pro cizí uživatele */}
               <Box style={{ marginTop: "auto" }}>
                 <Group grow>
                   <form
-                    action={canReserve ? setRezervorano : undefined}
+                    action={canReserve && !isOwner ? setRezervorano : undefined}
                     style={{
                       flex: 1,
-                      opacity: canReserve ? 1 : 0.4,
-                      pointerEvents: canReserve ? "auto" : "none",
+                      opacity: canReserve && !isOwner ? 1 : 0.4,
+                      pointerEvents: canReserve && !isOwner ? "auto" : "none",
                       transition: "opacity 0.2s",
                     }}
                   >
@@ -263,11 +279,11 @@ export default async function InzeratDetailPage({
                     />
                   </form>
                   <form
-                    action={canSell ? setProdano : undefined}
+                    action={canSell && !isOwner ? setProdano : undefined}
                     style={{
                       flex: 1,
-                      opacity: canSell ? 1 : 0.4,
-                      pointerEvents: canSell ? "auto" : "none",
+                      opacity: canSell && !isOwner ? 1 : 0.4,
+                      pointerEvents: canSell && !isOwner ? "auto" : "none",
                       transition: "opacity 0.2s",
                     }}
                   >
