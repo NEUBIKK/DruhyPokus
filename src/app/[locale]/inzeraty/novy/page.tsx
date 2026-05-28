@@ -89,7 +89,6 @@ export default function Page() {
           contactName: values.name,
           email: values.email,
           image: imageBase64,
-          ownerID: user?.id ?? null,
         }),
       });
 

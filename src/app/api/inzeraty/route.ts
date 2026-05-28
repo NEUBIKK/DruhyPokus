@@ -31,14 +31,8 @@ export async function POST(req: NextRequest) {
       email: email ?? "",
       image: image ?? null,
 
-      // Zde posíláme userId do všech možných názvů sloupců.
-      // Drizzle použije ten, který reálně existuje ve tvém inzerat.schema.ts,
-      // a ty ostatní jednoduše odignoruje. Tím pádem se hodnota konečně zapíše!
-      ownerId: userId,
       ownerID: userId,
-      clerkId: userId,
-      clerkID: userId,
-    } as any).returning();
+    }).returning();
 
     return Response.json({ success: true, item: newItem[0] });
   } catch (err: any) {
