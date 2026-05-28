@@ -13,6 +13,7 @@ import { IconPhoto, IconInfoCircle, IconArrowLeft, IconPencil, IconCalendarCheck
 import { HoverButton } from "@/components/ui/HoverButton";
 import { revalidatePath } from "next/cache";
 import { DeleteButton } from "./DeleteButton.client";
+import { ContactButton } from "@/components/ui/ContactButton";
 
 const shadowLabel = { label: { textShadow: "0 1px 2px rgba(0,0,0,0.4)" } };
 
@@ -58,6 +59,8 @@ export default async function InzeratDetailPage({
 
   const { userId } = await auth();
   const isOwner = !!userId && item.ownerID === userId;
+  const isSold = item.status === "Prodáno / Předáno";
+  const canContact = !isOwner && !isSold;
 
   const isFree = item.price === 0 || item.price === null;
   const stateBadgeProps = getStateBadgeProps(item.status);
@@ -99,6 +102,7 @@ export default async function InzeratDetailPage({
         <HoverButton
           href={`/${locale}/inzeraty`}
           variant="light"
+          bg="transparent"
           label={t("page.inzeratDetail.backToSeznam")}
           leftSection={<IconArrowLeft size={16} />}
           styles={{
@@ -107,12 +111,8 @@ export default async function InzeratDetailPage({
               color: "darkorange",
               textDecoration: "none",
             },
-            label: {
-              color: "darkorange",
-            },
-            leftSection: {
-              color: "darkorange",
-            },
+            label: { color: "darkorange" },
+            leftSection: { color: "darkorange" },
           }}
         />
         <Group gap="sm">
@@ -140,14 +140,7 @@ export default async function InzeratDetailPage({
       </Group>
 
       {/* Hlavní obsah — 50/50 */}
-      <Box
-        style={{
-          display: "flex",
-          gap: 16,
-          flexWrap: "wrap",
-          alignItems: "stretch",
-        }}
-      >
+      <Box style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "stretch" }}>
 
         {/* Levý sloupec — obrázek 50% */}
         <Box style={{ flex: "1 1 0", minWidth: 0 }}>
@@ -158,10 +151,7 @@ export default async function InzeratDetailPage({
                   src={item.image}
                   alt={item.title}
                   fill
-                  style={{
-                    objectFit: "cover",
-                    borderRadius: "var(--mantine-radius-md)",
-                  }}
+                  style={{ objectFit: "cover", borderRadius: "var(--mantine-radius-md)" }}
                 />
               </Box>
             ) : (
@@ -184,9 +174,7 @@ export default async function InzeratDetailPage({
 
               {/* Název + stav */}
               <Group justify="space-between" align="flex-start">
-                <Title order={2} style={{ flex: 1 }}>
-                  {item.title}
-                </Title>
+                <Title order={2} style={{ flex: 1 }}>{item.title}</Title>
                 <Badge
                   styles={shadowLabel}
                   variant="gradient"
@@ -200,31 +188,16 @@ export default async function InzeratDetailPage({
 
               {/* Kategorie + cena */}
               <Group gap="xs">
-                <Badge
-                  styles={shadowLabel}
-                  variant="gradient"
-                  gradient={{ from: "rgb(0, 204, 255)", to: "blue", deg: 275 }}
-                >
+                <Badge styles={shadowLabel} variant="gradient" gradient={{ from: "rgb(0, 204, 255)", to: "blue", deg: 275 }}>
                   {item.category}
                 </Badge>
-
                 {isFree ? (
-                  <Badge
-                    styles={shadowLabel}
-                    variant="gradient"
-                    gradient={{ from: "rgba(0, 255, 42, 1)", to: "green", deg: 275 }}
-                  >
+                  <Badge styles={shadowLabel} variant="gradient" gradient={{ from: "rgba(0, 255, 42, 1)", to: "green", deg: 275 }}>
                     {t("common.free")}
                   </Badge>
                 ) : (
-                  <Badge
-                    styles={shadowLabel}
-                    variant="gradient"
-                    gradient={{ from: "rgba(255, 146, 43, 1)", to: "orange", deg: 275 }}
-                  >
-                    {t("common.currency.prefix")}
-                    {item.price}
-                    {t("common.currency.suffix")}
+                  <Badge styles={shadowLabel} variant="gradient" gradient={{ from: "rgba(255, 146, 43, 1)", to: "orange", deg: 275 }}>
+                    {t("common.currency.prefix")}{item.price}{t("common.currency.suffix")}
                   </Badge>
                 )}
               </Group>
@@ -234,15 +207,22 @@ export default async function InzeratDetailPage({
 
               {/* Kontakt */}
               <Stack gap={2}>
-                <Text fw={600} size="sm">
-                  {t("page.inzeratDetail.contact")}
-                </Text>
-                <Text size="sm">{item.contactName}</Text>
-                {item.email && (
-                  <Text size="sm" c="dimmed">
-                    {item.email}
-                  </Text>
-                )}
+                <Text fw={600} size="sm">{t("page.inzeratDetail.contact")}</Text>
+                <Group justify="space-between" align="center">
+                  <Stack gap={2}>
+                    <Text size="sm">{item.contactName}</Text>
+                    {item.email && (
+                      <Text size="sm" c="dimmed">{item.email}</Text>
+                    )}
+                  </Stack>
+                  <div style={{ opacity: canContact ? 1 : 0.4, pointerEvents: canContact ? "auto" : "none" }}>
+                    <ContactButton
+                      label={t("page.inzeratDetail.contactButton")}
+                      itemId={id}
+                      locale={locale}
+                    />
+                  </div>
+                </Group>
               </Stack>
 
               {/* Info alert */}

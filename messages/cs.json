@@ -23,6 +23,7 @@
     },
 
     "inzeratDetail" :{
+      "contactButton": "Kontaktovat prodejce",
     "deleteConfirmTitle": "Opravdu chcete smazat tento inzerát?",
     "deleteConfirmMessage": "Smazaný inzerát nebude možné obnovit.",
     "deleteButton": "Smazat inzerát",

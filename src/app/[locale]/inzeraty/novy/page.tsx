@@ -10,7 +10,7 @@ import { useForm } from "@mantine/form";
 import { useHover } from "@mantine/hooks";
 import { useUser } from "@clerk/nextjs";
 import { ArrowLeft, Upload } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function Page() {
   const { user } = useUser();
@@ -54,6 +54,18 @@ export default function Page() {
       },
     },
   });
+
+  // Předvyplnění jména a emailu po načtení usera
+  useEffect(() => {
+    if (!user) return;
+    const fullName = user.fullName ?? user.username ?? "";
+    const email = user.primaryEmailAddress?.emailAddress ?? "";
+    form.setValues({
+      name: fullName,
+      email: email,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   const handleImageChange = (files: File[]) => {
     if (!files || files.length === 0) return;
