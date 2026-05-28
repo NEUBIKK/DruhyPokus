@@ -59,8 +59,12 @@ export default async function InzeratDetailPage({
 
   const { userId } = await auth();
   const isOwner = !!userId && item.ownerID === userId;
+  const isLoggedIn = !!userId;
   const isSold = item.status === "Prodáno / Předáno";
-  const canContact = !isOwner && !isSold;
+
+  const canContact = isLoggedIn && !isOwner && !isSold;
+  const canInteract = isLoggedIn && !isOwner;  // rezervovat — cizí přihlášený
+  const canMarkSold = isOwner;                 // oznacit jako prodano — pouze owner
 
   const isFree = item.price === 0 || item.price === null;
   const stateBadgeProps = getStateBadgeProps(item.status);
@@ -70,7 +74,7 @@ export default async function InzeratDetailPage({
     "use server";
     const { userId } = await auth();
     const current = await db.select().from(items).where(eq(items.id, Number(id))).get();
-    if (!current || current.ownerID === userId) return;
+    if (!current || !userId || current.ownerID === userId) return;
     await db.update(items).set({ status: "Rezervováno" }).where(eq(items.id, Number(id)));
     revalidatePath("/", "layout");
   }
@@ -79,7 +83,8 @@ export default async function InzeratDetailPage({
     "use server";
     const { userId } = await auth();
     const current = await db.select().from(items).where(eq(items.id, Number(id))).get();
-    if (!current || current.ownerID === userId) return;
+    // pouze owner může označit jako prodáno
+    if (!current || !userId || current.ownerID !== userId) return;
     await db.update(items).set({ status: "Prodáno / Předáno" }).where(eq(items.id, Number(id)));
     revalidatePath("/", "layout");
   }
@@ -236,15 +241,15 @@ export default async function InzeratDetailPage({
                 <Text size="sm">{t("page.inzeratDetail.paymentInfo")}</Text>
               </Alert>
 
-              {/* Akční tlačítka — pouze pro cizí uživatele */}
+              {/* Akční tlačítka */}
               <Box style={{ marginTop: "auto" }}>
                 <Group grow>
                   <form
-                    action={canReserve && !isOwner ? setRezervorano : undefined}
+                    action={canReserve && canInteract ? setRezervorano : undefined}
                     style={{
                       flex: 1,
-                      opacity: canReserve && !isOwner ? 1 : 0.4,
-                      pointerEvents: canReserve && !isOwner ? "auto" : "none",
+                      opacity: canReserve && canInteract ? 1 : 0.4,
+                      pointerEvents: canReserve && canInteract ? "auto" : "none",
                       transition: "opacity 0.2s",
                     }}
                   >
@@ -259,11 +264,11 @@ export default async function InzeratDetailPage({
                     />
                   </form>
                   <form
-                    action={canSell && !isOwner ? setProdano : undefined}
+                    action={canSell && canMarkSold ? setProdano : undefined}
                     style={{
                       flex: 1,
-                      opacity: canSell && !isOwner ? 1 : 0.4,
-                      pointerEvents: canSell && !isOwner ? "auto" : "none",
+                      opacity: canSell && canMarkSold ? 1 : 0.4,
+                      pointerEvents: canSell && canMarkSold ? "auto" : "none",
                       transition: "opacity 0.2s",
                     }}
                   >
