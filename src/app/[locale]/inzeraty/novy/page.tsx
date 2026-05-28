@@ -274,13 +274,23 @@ export default function Page() {
                     />
                   </div>
                   <div ref={emailHover.ref}>
-                    <TextInput
-                      radius="md"
-                      label={<span style={{ fontSize: "14px", fontWeight: 500 }}>E-mail</span>}
-                      placeholder="jmeno@example.com"
-                      styles={hoverInputStyles(emailHover.hovered)}
-                      {...form.getInputProps("email")}
-                    />
+                   <TextInput
+                    readOnly
+                    radius="md"
+                    label={<span style={{ fontSize: "14px", fontWeight: 500 }}>E-mail</span>}
+                    placeholder="jmeno@example.com"
+                    styles={{
+                      ...hoverInputStyles(emailHover.hovered),
+                      input: {
+                        ...hoverInputStyles(emailHover.hovered).input,
+                        color: "var(--mantine-color-dimmed)",
+                        cursor: "not-allowed",
+                        borderStyle: "dashed",
+                        opacity: 0.6,
+                      },
+                    }}
+                    {...form.getInputProps("email")}
+                  />
                   </div>
                 </SimpleGrid>
               </Box>
