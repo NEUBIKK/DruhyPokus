@@ -9,7 +9,8 @@ export const items = sqliteTable("items", {
   status: text(),
   contactName: text().notNull(),
   image: text(),
-  email: text(),
+  email: text().notNull(),
+  ownerID: text(),
 });
 
 export type Item = typeof items.$inferSelect;
