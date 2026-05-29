@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { eq, like, not, and, or, isNull, gte, lte, asc } from "drizzle-orm";
 import { Suspense } from "react";
+import { auth } from "@clerk/nextjs/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations();
@@ -80,6 +81,7 @@ function fetchListings({ query, category, state, price, priceMin, priceMax, sort
 
 export default async function Page(props: PageProps<"/[locale]/inzeraty">) {
   const t = await getTranslations();
+  const { userId } = await auth();
 
   const searchParams = await props.searchParams;
   const q = (searchParams.q as string) ?? "";
@@ -103,6 +105,16 @@ export default async function Page(props: PageProps<"/[locale]/inzeraty">) {
           label={t("page.inzeraty.buttonForm")}
         />
       </Group>
+
+      {!userId && (
+        <Text
+          size="xs"
+          ta="right"
+          style={{ color: "rgba(210, 60, 60, 0.75)" }}
+        >
+          ★ Pro přidávání, rezervaci a správu inzerátů je potřeba přihlášení.
+        </Text>
+      )}
 
       <Suspense fallback={null}>
         <InzeratSearchBar />
