@@ -32,7 +32,7 @@ export default async function LocaleLayout({
         <ColorSchemeScript defaultColorScheme="light" />
       </head>
 
-      <body>
+      <body suppressHydrationWarning>
         <NextIntlClientProvider>
           <MantineProvider defaultColorScheme="light">
             <ModalsProvider>

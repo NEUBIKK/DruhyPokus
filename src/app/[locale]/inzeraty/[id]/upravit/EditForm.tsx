@@ -51,7 +51,16 @@ export function EditForm({
 
   const isFreeInitial = item.price === null || item.price === 0;
 
-  const form = useForm({
+  const form = useForm<{
+    title: string;
+    description: string;
+    category: string;
+    price: number;
+    isFree: boolean;
+    status: string;
+    contactName: string;
+    email: string;
+  }>({
     initialValues: {
       title: item.title,
       description: item.description ?? "",
@@ -73,7 +82,7 @@ export function EditForm({
         price: values.isFree ? null : values.price,
         status: values.status,
         contactName: values.contactName,
-        email: values.email || null,
+        email: values.email,
       });
       router.push(`/inzeraty/${id}`);
     });
@@ -200,11 +209,22 @@ export function EditForm({
 
         <div ref={emailHover.ref}>
           <TextInput
-            label="E-mail"
-            name="email"
+            readOnly
             radius="md"
-            styles={hoverInputStyles(emailHover.hovered)}
+            label={<span style={{ fontSize: "14px", fontWeight: 500 }}>E-mail</span>}
+            placeholder="jmeno@example.com"
+            styles={{
+              ...hoverInputStyles(emailHover.hovered),
+              input: {
+                ...hoverInputStyles(emailHover.hovered).input,
+                color: "var(--mantine-color-dimmed)",
+                cursor: "not-allowed",
+                borderStyle: "dashed",
+                opacity: 0.6,
+              },
+            }}
             {...form.getInputProps("email")}
+            value={form.values.email ?? ""}
           />
         </div>
 
